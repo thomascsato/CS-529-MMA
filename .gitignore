@@ -9,6 +9,7 @@ dist/
 
 # Local environment files
 src/environments/environment.*.ts
+.env
 
 # Log files
 *.log
