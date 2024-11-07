@@ -1,0 +1,19 @@
+/* You can add global styles to this file, and also import other style files */
+nav ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  nav ul li {
+    display: inline;
+    margin-right: 10px;
+  }
+  
+  nav ul li a {
+    text-decoration: none;
+    color: blue;
+  }
+  
+  nav ul li a:hover {
+    text-decoration: underline;
+  }

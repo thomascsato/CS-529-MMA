@@ -1,0 +1,33 @@
+<div class="image-selector">
+  <select (change)="onImageChange($event)">
+    <option *ngFor="let image of images" [value]="image.url">{{ image.name }}</option>
+  </select>
+
+  <div class="image-box">
+    <img [src]="selectedImage" alt="Selected Image" />
+  </div>
+
+  <textarea [(ngModel)]="inputData" rows="5" cols="40" placeholder="Enter your input"></textarea>
+  <button (click)="fetchApiData(inputData)">Fetch Data</button>
+
+  <div class="output-container">
+    <textarea rows="5" cols="40" [value]="apiResponse" readonly></textarea>
+  </div>  
+
+  <!-- Attempting to create a dual selection. -->
+  <div class="fighter-selection">
+    <label for="fighter1">Select Fighter 1:</label>
+    <select [(ngModel)]="selectedFighter1" name="fighter1">
+      <option *ngFor="let fighter of fighters" [value]="fighter">{{ fighter }}</option>
+    </select>
+  
+    <label for="fighter2">Select Fighter 2:</label>
+    <select [(ngModel)]="selectedFighter2" name="fighter2">
+      <option *ngFor="let fighter of fighters" [value]="fighter">{{ fighter }}</option>
+    </select>
+  
+    <button (click)="compareFighters()">Compare Fighters</button>
+  </div>
+  
+
+</div>
