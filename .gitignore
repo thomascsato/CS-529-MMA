@@ -1,0 +1,23 @@
+.vscode/
+*.code-workspace
+
+# Dependency directory
+node_modules/
+
+# Build output directory
+dist/
+
+# Local environment files
+src/environments/environment.*.ts
+
+# Log files
+*.log
+
+# Temporary files
+temp/
+*.tmp
+*.bak
+
+# Angular cache and analysis files
+.angular/
+.angular/cache/
