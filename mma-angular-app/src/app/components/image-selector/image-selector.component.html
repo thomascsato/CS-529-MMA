@@ -1,27 +1,32 @@
 <div class="image-selector">
 
-  <div class="image-box">
-    <img [src]="selectedImage" alt="Selected Image" />
-  </div>
-
-  <div class="image-box">
-    <img [src]="selectedImage" alt="Selected Image" />
+  <div class="image-container">
+    <div class="image-box">
+      <img [src]="selectedImage" alt="Selected Image" />
+    </div>
+    <div class="image-box">
+      <img [src]="selectedImage" alt="Selected Image" />
+    </div>
   </div>
 
   <div class="fighter-selection">
-    <label for="fighter1">Select Fighter 1:</label>
-    <select [(ngModel)]="selectedFighter1" name="fighter1">
-      <option *ngFor="let fighter of fighters" [value]="fighter">{{ fighter }}</option>
-    </select>
-  
-    <label for="fighter2">Select Fighter 2:</label>
-    <select [(ngModel)]="selectedFighter2" name="fighter2">
-      <option *ngFor="let fighter of fighters" [value]="fighter">{{ fighter }}</option>
-    </select>
-  
-    <button (click)="compareFighters()">Compare Fighters</button>
+    <div class="fighter-select">
+        <label for="fighter1">Select Fighter 1:</label>
+        <select [(ngModel)]="selectedFighter1" name="fighter1">
+            <option *ngFor="let fighter of fighters" [value]="fighter">{{ fighter }}</option>
+        </select>
+    </div>
+
+    <div class="fighter-select">
+        <label for="fighter2">Select Fighter 2:</label>
+        <select [(ngModel)]="selectedFighter2" name="fighter2">
+            <option *ngFor="let fighter of fighters" [value]="fighter">{{ fighter }}</option>
+        </select>
+    </div>
   </div>
 
+  <button (click)="compareFighters()">Compare Fighters</button>
+  
   <div class="fighter-stats" *ngIf="fighter1Stats || fighter2Stats">
 
     <div class="fighter-stats" *ngIf="fighter1Stats">
