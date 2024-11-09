@@ -22,3 +22,6 @@ temp/
 # Angular cache and analysis files
 .angular/
 .angular/cache/
+
+# Images
+public/
