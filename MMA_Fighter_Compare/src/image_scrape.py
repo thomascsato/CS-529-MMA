@@ -27,7 +27,7 @@ def sanitize_filename(filename):
     # Remove invalid characters for filenames on most OSes
     return re.sub(r'[<>:"/\\|?*]', '_', filename)
 
-def download_image(img_url, fighter_name, save_folder="images", img_name=None):
+def download_image(img_url, save_folder="images", img_name=None):
 
     os.makedirs(save_folder, exist_ok=True)  # Create folder if it doesn't exist
 
@@ -50,8 +50,8 @@ def scrape_images_from_html(html_content, fighter_name, save_folder="images"):
 
     soup = BeautifulSoup(html_content, "html.parser")
     img_tags = soup.find_all("img")
-    fighter_name_f = fighter_name.lower().replace(" ", "-")
     fighter_name_html = format_fighter_name(fighter_name)
+    fighter_img = None
 
     for img in img_tags:
 
@@ -60,14 +60,14 @@ def scrape_images_from_html(html_content, fighter_name, save_folder="images"):
             fighter_img = img
             break  # Stop after finding the first match
     
-    img_url = fighter_img.get("src")
-    download_image(img_url, fighter_name, save_folder)
+    if fighter_img is not None:
+        img_url = fighter_img.get("src")
+        download_image(img_url, save_folder)
 
 # Sample usage
 if __name__ == "__main__":
 
     fighter_names = read_in_fighter_names()
-    fighter_names = [fighter_names[210]]
 
     for name in fighter_names:
 
