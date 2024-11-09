@@ -49,20 +49,16 @@ def download_image(img_url, save_folder="images", img_name=None):
 def scrape_images_from_html(html_content, fighter_name, save_folder="images"):
 
     soup = BeautifulSoup(html_content, "html.parser")
-    img_tags = soup.find_all("img")
-    fighter_name_html = format_fighter_name(fighter_name)
-    fighter_img = None
+    fighter_img = soup.find("img", class_="hero-profile__image")
 
-    for img in img_tags:
-
-        # Check if the search string is in the 'src' or 'alt' attribute
-        if fighter_name_html in img.get('src', '') or fighter_name_html in img.get('alt', ''):
-            fighter_img = img
-            break  # Stop after finding the first match
-    
     if fighter_img is not None:
         img_url = fighter_img.get("src")
-        download_image(img_url, save_folder)
+        if img_url:
+            # Use the fighter's name for the image filename
+            img_name = f"{fighter_name.replace(' ', '_')}.png"
+            download_image(img_url, save_folder, img_name)
+    else:
+        print(f"No image found for {fighter_name}")
 
 # Sample usage
 if __name__ == "__main__":
