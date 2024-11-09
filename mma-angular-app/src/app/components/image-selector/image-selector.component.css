@@ -52,6 +52,13 @@ button {
   margin-top: 10px;
 }
 
+.fighter-stats-container {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 20px;
+}
+
 .fighter-stats {
   margin-top: 20px;
   text-align: left;

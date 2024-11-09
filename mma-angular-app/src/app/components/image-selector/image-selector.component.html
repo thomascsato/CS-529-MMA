@@ -27,7 +27,7 @@
 
   <button (click)="compareFighters()">Compare Fighters</button>
   
-  <div class="fighter-stats" *ngIf="fighter1Stats || fighter2Stats">
+  <div class="fighter-stats-container" *ngIf="fighter1Stats || fighter2Stats">
 
     <div class="fighter-stats" *ngIf="fighter1Stats">
       <h2>{{ fighter1Stats.name }} Stats</h2>
