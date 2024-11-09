@@ -1,20 +1,13 @@
 <div class="image-selector">
-  <select (change)="onImageChange($event)">
-    <option *ngFor="let image of images" [value]="image.url">{{ image.name }}</option>
-  </select>
 
   <div class="image-box">
     <img [src]="selectedImage" alt="Selected Image" />
   </div>
 
-  <textarea [(ngModel)]="inputData" rows="5" cols="40" placeholder="Enter your input"></textarea>
-  <button (click)="fetchApiData(inputData)">Fetch Data</button>
+  <div class="image-box">
+    <img [src]="selectedImage" alt="Selected Image" />
+  </div>
 
-  <div class="output-container">
-    <textarea rows="5" cols="40" [value]="apiResponse" readonly></textarea>
-  </div>  
-
-  <!-- Attempting to create a dual selection. -->
   <div class="fighter-selection">
     <label for="fighter1">Select Fighter 1:</label>
     <select [(ngModel)]="selectedFighter1" name="fighter1">
@@ -27,6 +20,52 @@
     </select>
   
     <button (click)="compareFighters()">Compare Fighters</button>
+  </div>
+
+  <div class="fighter-stats" *ngIf="fighter1Stats || fighter2Stats">
+
+    <div class="fighter-stats" *ngIf="fighter1Stats">
+      <h2>{{ fighter1Stats.name }} Stats</h2>
+      <ul>
+        <li>Wins: {{ fighter1Stats.wins }}</li>
+        <li>Losses: {{ fighter1Stats.losses }}</li>
+        <li>Height: {{ fighter1Stats.height }} cm</li>
+        <li>Weight: {{ fighter1Stats.weight }} kg</li>
+        <li>Reach: {{ fighter1Stats.reach }} cm</li>
+        <li>Stance: {{ fighter1Stats.stance }}</li>
+        <li>Age: {{ fighter1Stats.age }}</li>
+        <li>Strikes Landed per Minute: {{ fighter1Stats.slpm }}</li>
+        <li>Striking Accuracy: {{ fighter1Stats.strAcc | percent }}</li>
+        <li>Strikes Absorbed per Minute: {{ fighter1Stats.sapm }}</li>
+        <li>Striking Defense: {{ fighter1Stats.strDef | percent }}</li>
+        <li>Takedowns Average: {{ fighter1Stats.tdAvg }}</li>
+        <li>Takedown Accuracy: {{ fighter1Stats.tdAcc | percent }}</li>
+        <li>Takedown Defense: {{ fighter1Stats.tdDef | percent }}</li>
+        <li>Submissions Average: {{ fighter1Stats.subAvg }}</li>
+      </ul>
+    </div>
+
+    <div class="fighter-stats" *ngIf="fighter2Stats">
+      <h2>{{ fighter2Stats.name }} Stats</h2>
+      <ul>
+        <li>Wins: {{ fighter2Stats.wins }}</li>
+        <li>Losses: {{ fighter2Stats.losses }}</li>
+        <li>Height: {{ fighter2Stats.height }} cm</li>
+        <li>Weight: {{ fighter2Stats.weight }} kg</li>
+        <li>Reach: {{ fighter2Stats.reach }} cm</li>
+        <li>Stance: {{ fighter2Stats.stance }}</li>
+        <li>Age: {{ fighter2Stats.age }}</li>
+        <li>Strikes Landed per Minute: {{ fighter2Stats.slpm }}</li>
+        <li>Striking Accuracy: {{ fighter2Stats.strAcc | percent }}</li>
+        <li>Strikes Absorbed per Minute: {{ fighter2Stats.sapm }}</li>
+        <li>Striking Defense: {{ fighter2Stats.strDef | percent }}</li>
+        <li>Takedowns Average: {{ fighter2Stats.tdAvg }}</li>
+        <li>Takedown Accuracy: {{ fighter2Stats.tdAcc | percent }}</li>
+        <li>Takedown Defense: {{ fighter2Stats.tdDef | percent }}</li>
+        <li>Submissions Average: {{ fighter2Stats.subAvg }}</li>
+      </ul>
+    </div>
+
   </div>
   
 
