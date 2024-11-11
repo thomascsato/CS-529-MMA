@@ -17,8 +17,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Global vars
-FILE_PATH = "C:\\Users\\thoma\\OneDrive\\Documents\\CS 529\\MMA_Fighter_Compare\\data\\completed_events_large.csv"
-TABLE_NAME = "MMA_fight_stats"
+FILE_PATH = "C:\\Users\\thoma\\OneDrive\\Documents\\CS 529\\MMA_Fighter_Compare\\data\\all_fights_final.csv"
+TABLE_NAME = "all_fights_final"
 
 # Helper functions:
 
