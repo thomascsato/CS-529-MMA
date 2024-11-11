@@ -12,6 +12,8 @@ import joblib
 
 def prepare_data(df):
 
+    global pre_features_numeric, pre_features_categorical, post_features_numeric, post_features_categorical
+
     # Create pre-fight features for both fighters
     pre_features_numeric = ["r_wins_agg",
         "r_losses_agg", "r_height_agg", "r_weight_agg", "r_reach_agg", "r_age_agg",
@@ -46,16 +48,33 @@ def prepare_data(df):
     y_post = df[all_post_features]
     y_win = df["winner"]  # Assuming 1 for r_fighter win, 0 for b_fighter win
     
-    return X_pre, X_all, y_post, y_win, pre_features_numeric, pre_features_categorical, all_features_numeric, all_features_categorical
+    return X_pre, X_all, y_post, y_win, all_features_numeric, all_features_categorical
 
-def train_post_fight_model(X_pre, y_post_fight, all_features_numeric, all_features_categorical):
+def train_post_fight_model(X_pre, y_post, pre_features_numeric, pre_features_categorical):
     """This function aims to predict post-fight statistics from two fighters.
     This will then be fed into a second model that predicts win probabilities.
     """
 
     # Split data into training and testing
-    X_train, X_test, y_train, y_test = train_test_split(X_pre, y_post_fight, test_size=0.2, random_state=42)
+    X_train, X_test, y_train, y_test = train_test_split(X_pre, y_post, test_size=0.2, random_state=42)
 
+    # Reset index (Important for rejoining y_train)
+    X_train = X_train.reset_index(drop=True)
+    y_train = y_train.reset_index(drop=True)
+
+    # Imputing target values here
+    y_train_numeric = y_train.select_dtypes(include=['float64', 'int64'])
+    y_train_categorical = y_train.select_dtypes(include=['object', 'category'])
+
+    imputer = SimpleImputer(strategy='mean')
+    y_train_imputed = pd.DataFrame(imputer.fit_transform(y_train_numeric), columns=y_train_numeric.columns)
+
+    # Concatenate numeric and categorical columns to form the full y_train_imputed DataFrame
+    y_train_imputed = pd.concat([y_train_imputed, y_train_categorical], axis=1)
+
+    # Ensure the order of columns matches the original y_train
+    y_train_imputed = y_train_imputed[y_train.columns]
+    
     # Transform numeric variables with scaling and imputation
     numeric_transformer = Pipeline(steps=[
         ('imputer', SimpleImputer(strategy='mean')),
@@ -71,8 +90,9 @@ def train_post_fight_model(X_pre, y_post_fight, all_features_numeric, all_featur
     # Use transformers to preprocess columns
     preprocessor = ColumnTransformer(
         transformers=[
-            ('num', numeric_transformer, all_features_numeric),
-            ('cat', categorical_transformer, all_features_categorical)
+            # Transforming only on X_train columns (pre-fight features)
+            ('num', numeric_transformer, pre_features_numeric),
+            ('cat', categorical_transformer, pre_features_categorical)
         ])
     
     # Multi-output regressor handles multiple target variables
@@ -80,17 +100,23 @@ def train_post_fight_model(X_pre, y_post_fight, all_features_numeric, all_featur
         ('preprocessor', preprocessor),
         ('multi_output_regressor', MultiOutputRegressor(RandomForestRegressor(n_estimators=100, random_state=42)))
     ])
-    
+
     # Fit the pipeline
-    model.fit(X_train, y_train)
+    print("Fitting model.")
+    model.fit(X_train, y_train_imputed)
+    print("Model fit successfully.")
     
     # Evaluate model
+    print("Evaluating model.")
     y_pred = model.predict(X_test)
+    print("Model evaluated successfully.")
     
-    return model
+    return model, y_pred
 
-def train_win_prob_model(X_all, y, all_features_numeric, all_features_categorical):
-    X_train, X_test, y_train, y_test = train_test_split(X_all, y, test_size=0.2, random_state=42)
+def train_win_prob_model(X_all, y_win, all_features_numeric, all_features_categorical):
+    """This model aims to predict win probabilities based on predicted post-fight stats."""
+
+    X_train, X_test, y_train, y_test = train_test_split(X_all, y_win, test_size=0.2, random_state=42)
 
     numeric_transformer = Pipeline(steps=[
         ('imputer', SimpleImputer(strategy='mean')),
@@ -133,68 +159,8 @@ if __name__ == "__main__":
     df = pd.read_csv('MMA_Fighter_Compare\\data\\all_fights_final.csv')
     
     # Prepare data
-    X_pre_fight, X_all, y_winner, pre_fight_numeric, pre_fight_categorical, all_numeric, all_categorical = prepare_data(df)
+    X_pre, X_all, y_post, y_win, all_numeric, all_categorical = prepare_data(df)
     
-    # Train post-fight statistics prediction model (you need to define your target variable for post-fight stats)
-    # For example: Assuming you have a target variable like 'total_significant_strikes' for fighter A.
-    
-    # Create your target variable for post-fight stats (this is just an example; adjust according to your dataset)
-    y_post_fight_stats = df['total_significant_strikes']  # Replace with actual post-fight stat you want to predict
-    
-    post_fight_model = train_post_fight_model(X_pre_fight, y_post_fight_stats)
-
-
-    # Train win prediction model on all features including predicted post-fight stats later on.
-    win_prediction_model = train_win_prob_model(X_all, y_winner)
-
-    # Save models
-    save_model(post_fight_model)
-    save_model(win_prediction_model)
-
-    print("Models saved successfully.")
-
-    # Example of how to use the models for prediction:
-    def predict_fight(fighter1_data, fighter2_data):
-        expected_length = len(pre_fight_numeric)
-        if len(fighter1_data) != expected_length or len(fighter2_data) != expected_length:
-            print(f"Expected feature length: {expected_length}")
-            print(f"Fighter 1 data length: {len(fighter1_data)}")
-            print(f"Fighter 2 data length: {len(fighter2_data)}")
-            raise ValueError("Fighter data must match expected feature length.")
-
-        # Combine fighter data into a single list with additional static features
-        pre_fight_data = fighter1_data + fighter2_data + ['Lightweight', False, 'Male']
-
-        # Create a DataFrame with combined fighter data
-        pre_fight_df = pd.DataFrame([pre_fight_data], columns=pre_fight_numeric + pre_fight_categorical)
-
-        # Predict post-fight statistics using the first model
-        predicted_post_stats = post_fight_model.predict(pre_fight_df)
-
-        # Combine predicted stats with original features for win prediction input
-        combined_input_for_win_prediction = np.concatenate((fighter1_data + fighter2_data,
-                                                            predicted_post_stats.tolist(),
-                                                            ['Lightweight', False]))  # Add static features if needed
-
-        combined_input_df = pd.DataFrame([combined_input_for_win_prediction],
-                                            columns=all_numeric + all_categorical)
-
-        # Make win prediction using the second model
-        win_probabilities = win_prediction_model.predict_proba(combined_input_df)[0]
-        
-        return win_probabilities[1], win_probabilities[0]  # Return probabilities for fighter1 and fighter2
-
-    # Example usage (ensure this matches your expected input structure)
-    fighter1_data = [10, 2, 180, 77, 72, 30,
-                    4.5 ,0.6 ,3.2 ,0.7,
-                    2.1 ,0.5 ,0.6 ,0.2]  
-                    
-    fighter2_data = [8 ,3 ,178 ,77 ,70 ,28,
-                    3.8 ,0.55 ,2.9 ,0.65,
-                    1.8 ,0.45 ,0.7 ,0.3]  
-
-    fighter1_prob, fighter2_prob = predict_fight(fighter1_data,
-                                                    fighter2_data)
-
-    print(f"Fighter 1 win probability: {fighter1_prob:.2f}")
-    print(f"Fighter 2 win probability: {fighter2_prob:.2f}")
+    # Train first model to predict 
+    post_fight_model, prediction = train_post_fight_model(X_pre, y_post, pre_features_numeric, pre_features_categorical)
+    print(prediction)
