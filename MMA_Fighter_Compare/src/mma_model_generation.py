@@ -39,7 +39,7 @@ def duplicate_and_switch(df):
 
 def prepare_data(df):
 
-    global pre_features_numeric, pre_features_categorical, post_features_numeric, post_features_categorical
+    global pre_features_numeric, pre_features_categorical, post_features_numeric
 
     # Create pre-fight features for both fighters
     pre_features_numeric = ["r_wins_agg",
@@ -58,15 +58,14 @@ def prepare_data(df):
         "r_sub_att", "r_rev", "r_ctrl_sec", "b_kd", "b_sig_str",
         "b_sig_str_att", "b_sig_str_acc", "b_str", "b_str_att", "b_str_acc",
         "b_td", "b_td_att", "b_td_acc", "b_sub_att", "b_rev", "b_ctrl_sec"]
-    post_features_categorical = ["method"]
 
     # Combining pre fight features with post fight features
     all_features_numeric = pre_features_numeric + post_features_numeric
-    all_features_categorical = pre_features_categorical + post_features_categorical
+    all_features_categorical = pre_features_categorical
 
     # Combining pre-fight features and post-fight features
     all_pre_features = pre_features_numeric + pre_features_categorical
-    all_post_features = post_features_numeric + post_features_categorical
+    all_post_features = post_features_numeric
     all_features = all_features_numeric + all_features_categorical
     
     # Splitting predictors and targets
@@ -85,22 +84,9 @@ def train_post_fight_model(X_pre, y_post, pre_features_numeric, pre_features_cat
     # Split data into training and testing
     X_train, X_test, y_train, y_test = train_test_split(X_pre, y_post, test_size=0.2, random_state=42)
 
-    # Reset index (Important for rejoining y_train)
-    X_train = X_train.reset_index(drop=True)
-    y_train = y_train.reset_index(drop=True)
-
-    # Imputing target values here
-    y_train_numeric = y_train.select_dtypes(include=['float64', 'int64'])
-    y_train_categorical = y_train.select_dtypes(include=['object', 'category'])
-
+    # Imputing target data
     imputer = SimpleImputer(strategy='mean')
-    y_train_imputed = pd.DataFrame(imputer.fit_transform(y_train_numeric), columns=y_train_numeric.columns)
-
-    # Concatenate numeric and categorical columns to form the full y_train_imputed DataFrame
-    y_train_imputed = pd.concat([y_train_imputed, y_train_categorical], axis=1)
-
-    # Ensure the order of columns matches the original y_train
-    y_train_imputed = y_train_imputed[y_train.columns]
+    y_train_imputed = pd.DataFrame(imputer.fit_transform(y_train), columns=y_train.columns)
 
     # Transform numeric variables with scaling and imputation
     numeric_transformer = Pipeline(steps=[
@@ -125,7 +111,7 @@ def train_post_fight_model(X_pre, y_post, pre_features_numeric, pre_features_cat
     # Multi-output regressor handles multiple target variables
     model = Pipeline([
         ('preprocessor', preprocessor),
-        ('multi_output_regressor', MultiOutputRegressor(RandomForestRegressor(n_estimators=100, random_state=42)))
+        ('multi_output_regressor', MultiOutputRegressor(RandomForestRegressor(n_estimators=10, verbose=2, random_state=42)))
     ])
 
     # Fit the pipeline
