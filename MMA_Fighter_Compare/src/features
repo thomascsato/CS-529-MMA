@@ -1,0 +1,67 @@
+"""features_numeric = ["finish_round", "total_rounds", "time_sec", "r_kd", "r_sig_str",
+       "r_sig_str_att", "r_sig_str_acc", "r_str", "r_str_att", "r_str_acc", "r_td", "r_td_att",
+       "r_td_acc", "r_sub_att", "r_rev", "r_ctrl_sec", "b_kd", "b_sig_str",
+       "b_sig_str_att", "b_sig_str_acc", "b_str", "b_str_att", "b_str_acc",
+       "b_td", "b_td_att", "b_td_acc", "b_sub_att", "b_rev", "b_ctrl_sec",
+       "kd_diff", "sig_str_diff", "sig_str_att_diff", "sig_str_acc_diff",
+       "str_diff", "str_att_diff", "str_acc_diff", "td_diff", "td_att_diff",
+       "td_acc_diff", "sub_att_diff", "rev_diff", "ctrl_sec_diff", "r_wins_agg",
+       "r_losses_agg", "r_height_agg", "r_weight_agg", "r_reach_agg", "r_age_agg",
+       "r_SLpM_agg", "r_sig_str_acc_agg", "r_SApM_agg", "r_str_def_agg",
+       "r_td_avg_agg", "r_td_acc_agg", "r_td_def_agg", "r_sub_avg_agg", "b_wins_agg",
+       "b_losses_agg", "b_height_agg", "b_weight_agg", "b_reach_agg", "b_age_agg",
+       "b_SLpM_agg", "b_sig_str_acc_agg", "b_SApM_agg", "b_str_def_agg",
+       "b_td_avg_agg", "b_td_acc_agg", "b_td_def_agg", "b_sub_avg_agg",
+       "wins_diff", "losses_diff", "height_diff", "weight_diff", "reach_diff",
+       "age_diff", "SLpM_diff", "SApM_diff", "sig_str_acc_agg_diff",
+       "str_def_agg_diff", "td_avg_agg_diff", "td_acc_agg_diff",
+       "td_def_agg_diff", "sub_avg_agg_diff"]
+    features_categorical = ["r_fighter", "b_fighter", "weight_class",
+       "is_title_bout", "gender", "method", "r_stance_agg", "b_stance_agg"]"""
+
+
+"""
+# 4. Load Model (for Lambda use)
+model = joblib.load('mma_model.joblib')
+
+# 5. Lambda Handler
+def lambda_handler(event, context):
+    try:
+        # Parse input from the event
+        body = json.loads(event["body"])
+        fighter1 = body["fighter1"]
+        fighter2 = body["fighter2"]
+        
+        # Fetch fighter stats and create feature vector
+        features = create_feature_vector(fighter1, fighter2)
+        
+        # Scale features
+        scaled_features = scaler.transform([features])
+        
+        # Make prediction
+        prediction = model.predict_proba(scaled_features)[0]
+        
+        # Convert to win percentages
+        fighter1_win_pct = prediction[1] * 100
+        fighter2_win_pct = prediction[0] * 100
+        
+        return {
+            "statusCode": 200,
+            "body": json.dumps({
+                fighter1: f"{fighter1_win_pct:.2f}%",
+                fighter2: f"{fighter2_win_pct:.2f}%"
+            })
+        }
+    except Exception as e:
+        return {
+            "statusCode": 500,
+            "body": json.dumps({"error": str(e)})
+        }
+
+# Helper function to create feature vector
+def create_feature_vector(fighter1, fighter2):
+    # This function should fetch stats for both fighters and calculate differences
+    # Return a list of feature differences in the same order as the training features
+    # You"ll need to implement the logic to fetch fighter stats from your database
+    pass
+"""
