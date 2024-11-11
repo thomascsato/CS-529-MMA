@@ -10,6 +10,33 @@ from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 from sklearn.metrics import accuracy_score, classification_report
 import joblib
 
+def duplicate_and_switch(df):
+    """This function will double the dataset, switching the red and blue fighter in order
+    to not fit the model based on order of fighter in the data."""
+
+    # Create a copy of the original DataFrame
+    df_switched = df.copy()
+
+    # Define columns that need to be switched
+    columns_to_switch = [
+        "wins_agg", "losses_agg", "height_agg", "weight_agg", "reach_agg",
+        "SLpM_agg", "sig_str_acc_agg", "SApM_agg", "str_def_agg",
+        "td_avg_agg", "td_acc_agg", "td_def_agg", "sub_avg_agg", 
+        "age_agg", "kd", "sig_str", "sig_str_att", "sig_str_acc",
+        "str_att", "str_acc", "td", "td_att", "td_acc", "str",
+        "sub_att", "rev", "ctrl_sec", "stance_agg"
+    ]
+
+    # Swap the corresponding 'r_' and 'b_' columns
+    for col in columns_to_switch:
+        df_switched['b_' + col] = df['r_' + col]  # Assign red fighter stats to blue fighter
+        df_switched['r_' + col] = df['b_' + col]  # Assign blue fighter stats to red fighter
+
+    # Adjust winner column based on new roles
+    df_switched['winner'] = df['winner'].apply(lambda x: 1 if x == 0 else 0)  # Assuming 1 for red win, 0 for blue win
+
+    return pd.concat([df, df_switched], ignore_index=True)
+
 def prepare_data(df):
 
     global pre_features_numeric, pre_features_categorical, post_features_numeric, post_features_categorical
@@ -74,7 +101,7 @@ def train_post_fight_model(X_pre, y_post, pre_features_numeric, pre_features_cat
 
     # Ensure the order of columns matches the original y_train
     y_train_imputed = y_train_imputed[y_train.columns]
-    
+
     # Transform numeric variables with scaling and imputation
     numeric_transformer = Pipeline(steps=[
         ('imputer', SimpleImputer(strategy='mean')),
@@ -157,9 +184,12 @@ if __name__ == "__main__":
     
     # Load your fight data
     df = pd.read_csv('MMA_Fighter_Compare\\data\\all_fights_final.csv')
+
+    # Duplicate values and concatenate
+    df_full = duplicate_and_switch(df)
     
     # Prepare data
-    X_pre, X_all, y_post, y_win, all_numeric, all_categorical = prepare_data(df)
+    X_pre, X_all, y_post, y_win, all_numeric, all_categorical = prepare_data(df_full)
     
     # Train first model to predict 
     post_fight_model, prediction = train_post_fight_model(X_pre, y_post, pre_features_numeric, pre_features_categorical)
