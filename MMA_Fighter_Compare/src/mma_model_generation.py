@@ -41,8 +41,7 @@ def prepare_data(df):
     return X_pre, X_all, y, pre_features_numeric, pre_features_categorical, all_features_numeric, all_features_categorical
 
 # 2. Model Training
-def train_model(X_all, y, all_features_numeric, all_features_categorical, pre_features_numeric, pre_features_categorical):
-    # Training model on all data
+def train_model(X_all, y, all_features_numeric, all_features_categorical):
     X_train, X_test, y_train, y_test = train_test_split(X_all, y, test_size=0.2, random_state=42)
 
     numeric_transformer = Pipeline(steps=[
@@ -61,12 +60,6 @@ def train_model(X_all, y, all_features_numeric, all_features_categorical, pre_fe
             ('cat', categorical_transformer, all_features_categorical)
         ])
     
-    pre_fight_preprocessor = ColumnTransformer(
-        transformers=[
-            ('num', numeric_transformer, pre_features_numeric),
-            ('cat', categorical_transformer, pre_features_categorical)
-        ])
-    
     model = Pipeline([
         ('preprocessor', preprocessor),
         ('classifier', RandomForestClassifier(n_estimators=100, random_state=42))
@@ -74,10 +67,6 @@ def train_model(X_all, y, all_features_numeric, all_features_categorical, pre_fe
     
     # Fit the pipeline
     model.fit(X_train, y_train)
-
-    # Fit the pre fight units
-    pre_fight_preprocessor.fit(X_train[pre_features_numeric + pre_features_categorical])
-    pre_fight_feature_names = pre_fight_preprocessor.get_feature_names_out()
     
     # Evaluate model
     y_pred = model.predict(X_test)
@@ -85,13 +74,11 @@ def train_model(X_all, y, all_features_numeric, all_features_categorical, pre_fe
     print(f"Model Accuracy: {accuracy}")
     print(classification_report(y_test, y_pred))
     
-    return model, pre_fight_preprocessor, pre_fight_feature_names
+    return model
 
-# 3. Save Model
-def save_model(model, pre_fight_preprocessor, pre_fight_feature_names):
+#3. save model
+def save_model(model):
     joblib.dump(model, 'mma_model.joblib')
-    joblib.dump(pre_fight_preprocessor, 'pre_fight_preprocessor.joblib')
-    joblib.dump(pre_fight_feature_names, 'pre_fight_feature_names.joblib')
 
 if __name__ == "__main__":
     # Load your fight data
@@ -101,32 +88,35 @@ if __name__ == "__main__":
     X_pre_fight, X_all, y, pre_fight_numeric, pre_fight_categorical, all_numeric, all_categorical = prepare_data(df)
     
     # Train model on all features
-    model, pre_fight_preprocessor, pre_fight_feature_names = train_model(X_all, y, all_numeric, all_categorical, pre_fight_numeric, pre_fight_categorical)
+    model = train_model(X_all, y, all_numeric, all_categorical)
     
-    # Save model, pre-fight preprocessor, and feature names
-    save_model(model, pre_fight_preprocessor, pre_fight_feature_names)
+    # Save model
+    save_model(model)
     
-    print("Model, pre-fight preprocessor, and feature names saved successfully.")
+    print("Model saved successfully.")
     
     # Example of how to use the model for prediction (using only pre-fight features)
-    def predict_fight(pre_fight_data, model, pre_fight_preprocessor, pre_fight_feature_names):
-        print(f"Number of pre-fight features: {len(pre_fight_numeric) + len(pre_fight_categorical)}")
-        print(f"Shape of pre_fight_data: {np.array(pre_fight_data).shape}")
+    def predict_fight(pre_fight_data, model, pre_fight_numeric, pre_fight_categorical, all_numeric, all_categorical):
+        # Create a DataFrame with pre-fight data
+        pre_fight_df = pd.DataFrame([pre_fight_data], columns=pre_fight_numeric + pre_fight_categorical)
         
-        pre_fight_data_transformed = pre_fight_preprocessor.transform(pd.DataFrame([pre_fight_data], columns=pre_fight_numeric + pre_fight_categorical))
-        print(f"Shape of pre_fight_data_transformed: {pre_fight_data_transformed.shape}")
-        print(f"Number of pre_fight_feature_names: {len(pre_fight_feature_names)}")
+        # Create a full feature set with placeholder values for post-fight features
+        full_feature_set = pre_fight_df.copy()
+        for feature in all_numeric:
+            if feature not in pre_fight_numeric:
+                full_feature_set[feature] = 0  # or some other placeholder value
+        for feature in all_categorical:
+            if feature not in pre_fight_categorical:
+                full_feature_set[feature] = 'unknown'  # or some other placeholder value
         
-        pre_fight_data_df = pd.DataFrame(pre_fight_data_transformed, columns=pre_fight_feature_names)
-        print(f"Shape of pre_fight_data_df: {pre_fight_data_df.shape}")
+        # Ensure columns are in the correct order
+        full_feature_set = full_feature_set[all_numeric + all_categorical]
         
-        expected_features = model.named_steps['classifier'].n_features_in_
-        print(f"Number of features expected by the model: {expected_features}")
-        
-        return model.named_steps['classifier'].predict_proba(pre_fight_data_df)[0]
-
-    # Example usage
+        # Make prediction
+        return model.predict_proba(full_feature_set)[0]
+    
+    # Example usage (you would replace this with actual fighter data)
     example_pre_fight_data = [0] * len(pre_fight_numeric) + ['Lightweight', False, 'Male', 'Orthodox', 'Southpaw']
-    win_probabilities = predict_fight(example_pre_fight_data, model, pre_fight_preprocessor, pre_fight_feature_names)
+    win_probabilities = predict_fight(example_pre_fight_data, model, pre_fight_numeric, pre_fight_categorical, all_numeric, all_categorical)
     print(f"Fighter 1 win probability: {win_probabilities[1]:.2f}")
     print(f"Fighter 2 win probability: {win_probabilities[0]:.2f}")
