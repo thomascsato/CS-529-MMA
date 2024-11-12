@@ -76,13 +76,18 @@ def prepare_data(df):
     
     return X_pre, X_all, y_post, y_win, all_features_numeric, all_features_categorical
 
-def train_post_fight_model(X_pre, y_post, pre_features_numeric, pre_features_categorical):
+def train_post_fight_model(fighter_input_data, X_pre, y_post, pre_features_numeric, pre_features_categorical):
     """This function aims to predict post-fight statistics from two fighters.
     This will then be fed into a second model that predicts win probabilities.
     """
 
     # Split data into training and testing
-    X_train, X_test, y_train, y_test = train_test_split(X_pre, y_post, test_size=0.2, random_state=42)
+    # X_train, X_test, y_train, y_test = train_test_split(X_pre, y_post, test_size=0.2, random_state=42)
+
+    # Training on all data available
+    X_train = X_pre
+    y_train = y_post
+    print(X_train.columns)
 
     # Imputing target data
     imputer = SimpleImputer(strategy='mean')
@@ -111,7 +116,7 @@ def train_post_fight_model(X_pre, y_post, pre_features_numeric, pre_features_cat
     # Multi-output regressor handles multiple target variables
     model = Pipeline([
         ('preprocessor', preprocessor),
-        ('multi_output_regressor', MultiOutputRegressor(RandomForestRegressor(n_estimators=10, verbose=2, random_state=42)))
+        ('multi_output_regressor', MultiOutputRegressor(RandomForestRegressor(n_estimators=5, verbose=2, random_state=42)))
     ])
 
     # Fit the pipeline
@@ -121,7 +126,7 @@ def train_post_fight_model(X_pre, y_post, pre_features_numeric, pre_features_cat
     
     # Evaluate model
     print("Evaluating model.")
-    y_pred = model.predict(X_test)
+    y_pred = model.predict(fighter_input_data)
     print("Model evaluated successfully.")
     
     return model, y_pred
@@ -178,5 +183,9 @@ if __name__ == "__main__":
     X_pre, X_all, y_post, y_win, all_numeric, all_categorical = prepare_data(df_full)
     
     # Train first model to predict 
-    post_fight_model, prediction = train_post_fight_model(X_pre, y_post, pre_features_numeric, pre_features_categorical)
-    print(prediction)
+    jon_jones_vs_stipe_miocic = np.array([[27, 1, 193.04, 112.49, 213.36, 37, 4.29, 0.57, 2.22, 0.64, 1.93, 0.45, 0.95, 0.5,
+                                 20, 4, 193.04, 108.86, 203.2, 42, 4.82, 0.53, 3.82, 0.54, 1.86, 0.34, 0.68, 0,
+                                 "UFC Heavyweight Title", 1, "Men", "Orthodox", "Orthodox"]])
+    post_fight_model, prediction = train_post_fight_model(jon_jones_vs_stipe_miocic, X_pre, y_post, pre_features_numeric, pre_features_categorical)
+    
+    np.savetxt("jjvssm.csv", prediction, delimiter=",")
