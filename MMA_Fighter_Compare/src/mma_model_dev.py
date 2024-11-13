@@ -185,8 +185,9 @@ def train_win_prob_model(post_pred, X_all, y_win, all_features_numeric, all_feat
     
     return model, y_prob
 
-def save_model(model):
-    joblib.dump(model, 'mma_model.joblib')
+def save_model(post_model, win_model):
+    joblib.dump(post_model, 'post_fight_model.joblib')
+    joblib.dump(win_model, 'win_pred_model.joblib')
 
 if __name__ == "__main__":
     
@@ -206,8 +207,8 @@ if __name__ == "__main__":
         "UFC Heavyweight Title", 1, "Men", "Orthodox", "Orthodox"]
     ], columns=pre_features_numeric + pre_features_categorical)
 
-    #post_fight_model, prediction = train_post_fight_model(jon_jones_vs_stipe_miocic, X_pre, y_post, pre_features_numeric, pre_features_categorical)
-
+    post_fight_model, prediction = train_post_fight_model(jon_jones_vs_stipe_miocic, X_pre, y_post, pre_features_numeric, pre_features_categorical)
+    
     prediction = pd.DataFrame([
         [3.6667, 5.0000, 268.2000,
         0.7000, 66.4000, 163.8000, 0.5693, 121.9333, 200.1333, 0.6260, 2.3000, 4.4000, 0.6800, 0.8000, 0.0000, 119.6000,
