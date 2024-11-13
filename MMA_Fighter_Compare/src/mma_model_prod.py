@@ -1,13 +1,11 @@
 import pandas as pd
 import numpy as np
-from sklearn.model_selection import train_test_split
 from sklearn.impute import SimpleImputer
 from sklearn.multioutput import MultiOutputRegressor
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
-from sklearn.metrics import accuracy_score, classification_report
 import joblib
 
 def duplicate_and_switch(df):
@@ -87,13 +85,10 @@ def win_prob_single_vector(post_fight_pred, pre_fight_data):
 
     return combined_input
 
-def train_post_fight_model(fighter_input_data, X_pre, y_post, pre_features_numeric, pre_features_categorical):
+def train_post_fight_model(X_pre, y_post, pre_features_numeric, pre_features_categorical):
     """This function aims to predict post-fight statistics from two fighters.
     This will then be fed into a second model that predicts win probabilities.
     """
-
-    # Split data into training and testing
-    # X_train, X_test, y_train, y_test = train_test_split(X_pre, y_post, test_size=0.2, random_state=42)
 
     # Training on all data available
     X_train = X_pre
@@ -126,26 +121,20 @@ def train_post_fight_model(fighter_input_data, X_pre, y_post, pre_features_numer
     # Multi-output regressor handles multiple target variables
     model = Pipeline([
         ('preprocessor', preprocessor),
-        ('multi_output_regressor', MultiOutputRegressor(RandomForestRegressor(n_estimators=5, verbose=2, random_state=42)))
+        ('multi_output_regressor', MultiOutputRegressor(RandomForestRegressor(n_estimators=2, verbose=2, random_state=42)))
     ])
 
     # Fit the pipeline
     print("Fitting model.")
     model.fit(X_train, y_train_imputed)
     print("Model fit successfully.")
-    
-    # Evaluate model
-    print("Evaluating model.")
-    y_pred = model.predict(fighter_input_data)
-    print("Model evaluated successfully.")
-    
-    return model, y_pred
 
-def train_win_prob_model(post_pred, X_all, y_win, all_features_numeric, all_features_categorical):
+    joblib.dump(model, 'MMA_Fighter_Compare\\models\\post_fight_model.joblib')
+
+    return model
+
+def train_win_prob_model(X_all, y_win, all_features_numeric, all_features_categorical):
     """This model aims to predict win probabilities based on predicted post-fight stats."""
-
-    # Split the data into training and testing
-    # X_train, X_test, y_train, y_test = train_test_split(X_all, y_win, test_size=0.2, random_state=42)
 
     # Training on all data available
     X_train = X_all
@@ -169,25 +158,15 @@ def train_win_prob_model(post_pred, X_all, y_win, all_features_numeric, all_feat
     
     model = Pipeline([
         ('preprocessor', preprocessor),
-        ('classifier', RandomForestClassifier(n_estimators=100, random_state=42, verbose=2))
+        ('classifier', RandomForestClassifier(n_estimators=2, random_state=42, verbose=2))
     ])
     
     # Fit the pipeline
     model.fit(X_train, y_train)
-    
-    # Evaluate model
-    #y_pred = model.predict(post_pred)
-    #accuracy = accuracy_score(y_test, y_pred)
-    #print(f"Model Accuracy: {accuracy}")
-    #print(classification_report(y_test, y_pred))
 
-    y_prob = model.predict_proba(post_pred)
-    
-    return model, y_prob
+    joblib.dump(model, 'MMA_Fighter_Compare\\models\\win_pred_model.joblib')
 
-def save_model(post_model, win_model):
-    joblib.dump(post_model, 'post_fight_model.joblib')
-    joblib.dump(win_model, 'win_pred_model.joblib')
+    return model
 
 if __name__ == "__main__":
     
@@ -199,24 +178,9 @@ if __name__ == "__main__":
     
     # Prepare data
     X_pre, X_all, y_post, y_win, all_numeric, all_categorical = prepare_data(df_full)
-    
-    # Train first model to predict 
-    jon_jones_vs_stipe_miocic = pd.DataFrame([
-        [27, 1, 193.04, 112.49, 213.36, 37, 4.29, 0.57, 2.22, 0.64, 1.93, 0.45, 0.95, 0.5,
-        20, 4, 193.04, 108.86, 203.2, 42, 4.82, 0.53, 3.82, 0.54, 1.86, 0.34, 0.68, 0,
-        "UFC Heavyweight Title", 1, "Men", "Orthodox", "Orthodox"]
-    ], columns=pre_features_numeric + pre_features_categorical)
 
-    post_fight_model, prediction = train_post_fight_model(jon_jones_vs_stipe_miocic, X_pre, y_post, pre_features_numeric, pre_features_categorical)
-    
-    prediction = pd.DataFrame([
-        [3.6667, 5.0000, 268.2000,
-        0.7000, 66.4000, 163.8000, 0.5693, 121.9333, 200.1333, 0.6260, 2.3000, 4.4000, 0.6800, 0.8000, 0.0000, 119.6000,
-        0.0000, 35.8000, 117.7333, 0.4600, 47.6000, 103.6000, 0.4400, 0.0000, 7.4000, 0.0160, 0.0000, 0.0000, 5.0000]
-    ], columns=post_features_numeric)
+    # Train post fight statistics model
+    post_fight_model = train_post_fight_model(X_pre, y_post, pre_features_numeric, pre_features_categorical)
 
-    prediction_vector = win_prob_single_vector(prediction, jon_jones_vs_stipe_miocic)
-    print(prediction_vector)
-
-    win_prob_model, win_prob = train_win_prob_model(prediction_vector, X_all, y_win, all_numeric, all_categorical)
-    print(win_prob)
+    # Train win probability prediction model
+    win_prob_model = train_win_prob_model(X_all, y_win, all_numeric, all_categorical)

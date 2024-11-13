@@ -25,3 +25,6 @@ temp/
 
 # Images
 public/
+
+# Deployment Package Dependencies
+package/
