@@ -121,7 +121,7 @@ def train_post_fight_model(X_pre, y_post, pre_features_numeric, pre_features_cat
     # Multi-output regressor handles multiple target variables
     model = Pipeline([
         ('preprocessor', preprocessor),
-        ('multi_output_regressor', MultiOutputRegressor(RandomForestRegressor(n_estimators=2, verbose=2, random_state=42)))
+        ('multi_output_regressor', MultiOutputRegressor(RandomForestRegressor(n_estimators=50, verbose=2, random_state=42)))
     ])
 
     # Fit the pipeline
@@ -158,7 +158,7 @@ def train_win_prob_model(X_all, y_win, all_features_numeric, all_features_catego
     
     model = Pipeline([
         ('preprocessor', preprocessor),
-        ('classifier', RandomForestClassifier(n_estimators=2, random_state=42, verbose=2))
+        ('classifier', RandomForestClassifier(n_estimators=50, random_state=42, verbose=2))
     ])
     
     # Fit the pipeline
