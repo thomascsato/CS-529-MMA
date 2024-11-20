@@ -129,7 +129,7 @@ def train_post_fight_model(X_pre, y_post, pre_features_numeric, pre_features_cat
     model.fit(X_train, y_train_imputed)
     print("Model fit successfully.")
 
-    joblib.dump(model, 'MMA_Fighter_Compare\\models\\post_fight_model.joblib')
+    joblib.dump(model, 'MMA_Fighter_Compare\\models\\post_fight_model_1.joblib')
 
     return model
 
@@ -164,7 +164,7 @@ def train_win_prob_model(X_all, y_win, all_features_numeric, all_features_catego
     # Fit the pipeline
     model.fit(X_train, y_train)
 
-    joblib.dump(model, 'MMA_Fighter_Compare\\models\\win_pred_model.joblib')
+    joblib.dump(model, 'MMA_Fighter_Compare\\models\\win_pred_model_1.joblib')
 
     return model
 
