@@ -15,8 +15,8 @@
 }
 
 .image-box {
-  width: 300px;
-  height: 200px;
+  width: 250px;
+  height: 400px;
   border: 1px solid #ccc;
   overflow: hidden;
 }

@@ -1,5 +1,12 @@
 import { Component } from '@angular/core';
 import { ApiService } from '../../services/api.service';
+import * as imageData from './fighters.json';
+import namesData from './fighter_names.json'
+
+interface Image {
+  name: string;
+  url: string;
+}
 
 interface FighterStats {
   name: string;
@@ -26,17 +33,18 @@ interface FighterStats {
   styleUrls: ['./image-selector.component.css'],
 })
 export class ImageSelectorComponent {
-  images = [
-    { name: 'Islam Makhachev', url: 'Islam_Makhachev.png' },
-    { name: 'Derrick Lewis', url: 'Derrick_Lewis.png' },
-    { name: 'Jon Jones', url: 'Jon_Jones.png' },
-  ];
+  images: Image[] = (imageData as any).default;
+  fighters: string[] = namesData;
+
+  ngOnInit() {
+    console.log('Images loaded:', this.images);
+    console.log('Names loaded:', this.fighters);
+  }
 
   selectedImage = this.images[0].url;
   apiResponse: string = '';
   inputData: string = '';
 
-  fighters: string[] = ['Islam Makhachev', 'Derrick Lewis', 'Brandon Moreno', 'Jon Jones'];
   selectedFighter1: string | undefined; // Declare this property
   selectedFighter2: string | undefined; // Declare this property
   fighter1Stats: FighterStats | null = null;
@@ -54,12 +62,12 @@ export class ImageSelectorComponent {
   updateImages(): void {
     // Find and update the image for Fighter 1
     this.fighter1Image = this.images.find(
-      (img) => img.name === this.selectedFighter1
+      (img: Image) => img.name === this.selectedFighter1
     )?.url || '';
-  
+    
     // Find and update the image for Fighter 2
     this.fighter2Image = this.images.find(
-      (img) => img.name === this.selectedFighter2
+      (img: Image) => img.name === this.selectedFighter2
     )?.url || '';
   }
 
