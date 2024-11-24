@@ -2,24 +2,24 @@
 
   <div class="image-container">
     <div class="image-box">
-      <img [src]="selectedImage" alt="Selected Image" />
+      <img [src]="fighter1Image" alt="Fighter 1 Image" />
     </div>
     <div class="image-box">
-      <img [src]="selectedImage" alt="Selected Image" />
+      <img [src]="fighter2Image" alt="Fighter 2 Image" />
     </div>
   </div>
 
   <div class="fighter-selection">
     <div class="fighter-select">
         <label for="fighter1">Select Fighter 1:</label>
-        <select [(ngModel)]="selectedFighter1" name="fighter1">
+        <select [(ngModel)]="selectedFighter1" (change)="updateImages()" name="fighter1">
             <option *ngFor="let fighter of fighters" [value]="fighter">{{ fighter }}</option>
         </select>
     </div>
 
     <div class="fighter-select">
         <label for="fighter2">Select Fighter 2:</label>
-        <select [(ngModel)]="selectedFighter2" name="fighter2">
+        <select [(ngModel)]="selectedFighter2" (change)="updateImages()" name="fighter2">
             <option *ngFor="let fighter of fighters" [value]="fighter">{{ fighter }}</option>
         </select>
     </div>

@@ -27,9 +27,9 @@ interface FighterStats {
 })
 export class ImageSelectorComponent {
   images = [
-    { name: 'Nature', url: 'Screenshot 2023-04-24 214103.png' },
-    { name: 'City', url: 'Screenshot 2023-06-07 200321.png' },
-    { name: 'Mountains', url: 'Screenshot 2024-10-28 130023.png' },
+    { name: 'Islam Makhachev', url: 'Islam_Makhachev.png' },
+    { name: 'Derrick Lewis', url: 'Derrick_Lewis.png' },
+    { name: 'Jon Jones', url: 'Jon_Jones.png' },
   ];
 
   selectedImage = this.images[0].url;
@@ -41,12 +41,26 @@ export class ImageSelectorComponent {
   selectedFighter2: string | undefined; // Declare this property
   fighter1Stats: FighterStats | null = null;
   fighter2Stats: FighterStats | null = null;
+  fighter1Image: string = ''; // Image URL for Fighter 1
+  fighter2Image: string = ''; // Image URL for Fighter 2
 
   constructor(private apiService: ApiService) {}
 
   onImageChange(event: Event): void {
     const target = event.target as HTMLSelectElement;
     this.selectedImage = target.value;
+  }
+
+  updateImages(): void {
+    // Find and update the image for Fighter 1
+    this.fighter1Image = this.images.find(
+      (img) => img.name === this.selectedFighter1
+    )?.url || '';
+  
+    // Find and update the image for Fighter 2
+    this.fighter2Image = this.images.find(
+      (img) => img.name === this.selectedFighter2
+    )?.url || '';
   }
 
   // Attempting to create a dual selection
