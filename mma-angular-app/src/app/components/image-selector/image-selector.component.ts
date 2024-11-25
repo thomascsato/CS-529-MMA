@@ -35,6 +35,12 @@ interface FighterStats {
 export class ImageSelectorComponent {
   images: Image[] = (imageData as any).default;
   fighters: string[] = namesData;
+  weight_classes: string[] = [
+    "Flyweight", "Bantamweight", "Featherweight", "Lightweight", "Welterweight", "Middleweight",
+    "Light Heavyweight", "Heavyweight", "Women's Strawweight", "Women's Flyweight",
+    "Women's Bantamweight", "Women's Featherweight"
+  ]
+  genders: string[] = ["Men", "Women"]
 
   ngOnInit() {
     console.log('Images loaded:', this.images);
@@ -47,6 +53,9 @@ export class ImageSelectorComponent {
 
   selectedFighter1: string | undefined; // Declare this property
   selectedFighter2: string | undefined; // Declare this property
+  selectedWeightClass: string | undefined
+  selectedGender: string | undefined
+
   fighter1Stats: FighterStats | null = null;
   fighter2Stats: FighterStats | null = null;
   fighter1Image: string = ''; // Image URL for Fighter 1
@@ -77,6 +86,8 @@ export class ImageSelectorComponent {
       const inputData = {
         fighter_1: this.selectedFighter1, // Make sure keys match what is expected in Lambda.
         fighter_2: this.selectedFighter2,
+        weight_class: this.selectedWeightClass,
+        gender: this.selectedGender
       };
 
       this.apiService.fetchData(inputData).subscribe(

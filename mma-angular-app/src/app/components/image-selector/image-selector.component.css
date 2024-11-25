@@ -1,17 +1,16 @@
 .image-selector {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin: 20px;
+  width: 100%; /* Ensure full width */
+  max-width: none; /* Remove any max-width constraints */
   gap: 1rem;
+  margin: 0; /* Reset margins */
+  padding: 0; /* Reset padding */
 }
 
 .image-container {
   display: flex;
-  justify-content: center;
-  gap: 1rem;
-  width: 100%;
-  margin-bottom: 20px;
+  gap: 15rem;
+  justify-content: space-between; /* Pushes items to edges */
+  width: 100%; /* Ensure it spans full width */
 }
 
 .image-box {
@@ -28,15 +27,23 @@
 }
 
 .fighter-selection {
-  display: flex; /* Align items side by side */
-  justify-content: center; /* Center the items horizontally */
-  gap: 20px; /* Space between search bars */
+  display: flex;
+  flex-direction: column; /* Stack child elements vertically */
+  align-items: center; /* Center align everything */
+  gap: 20px; /* Space between rows */
+}
+
+.fighter-select-container {
+  display: flex; /* Keep the selects side by side */
+  justify-content: center; /* Center the selects */
+  gap: 20px; /* Space between the selects */
 }
 
 .fighter-select {
   display: flex;
   flex-direction: column; /* Stack label above select */
   align-items: center; /* Center align items within each select */
+  font-size: 25px;
 }
 
 label {
@@ -46,6 +53,7 @@ label {
 select {
   margin-bottom: 10px;
   width: 200px; /* Adjust as needed */
+  font-size: 20px;
 }
 
 button {
