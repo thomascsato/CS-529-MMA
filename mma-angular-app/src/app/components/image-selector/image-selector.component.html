@@ -1,8 +1,16 @@
 <div class="image-selector">
 
   <div class="image-container">
-    <div class="image-box">
-      <img [src]="fighter1Image" alt="Fighter 1 Image" />
+
+    <div class="fighter-box">
+      <div class="image-box">
+        <img [src]="fighter1Image" alt="Fighter 1 Image" />
+      </div>
+      <p class="fighter-caption">
+        <span class="fighter-name">{{ selectedFighter1 }}</span><br>
+        <span class="win-label">Win Probability:</span><br>
+        <span class="win-probability">{{ winprobr }}</span>
+      </p>
     </div>
 
     <div class="fighter-selection">
@@ -43,9 +51,17 @@
 
     </div>
 
-    <div class="image-box">
-      <img [src]="fighter2Image" alt="Fighter 2 Image" />
+    <div class="fighter-box">
+      <div class="image-box">
+        <img [src]="fighter2Image" alt="Fighter 2 Image" />
+      </div>
+      <p class="fighter-caption">
+        <span class="fighter-name">{{ selectedFighter2 }}</span><br>
+        <span class="win-label">Win Probability:</span><br>
+        <span class="win-probability">{{ winprobb }}</span>
+      </p>
     </div>
+
   </div>
 
   <div class="fighter-stats-container" *ngIf="fighter1Stats || fighter2Stats">

@@ -17,3 +17,7 @@ nav ul {
   nav ul li a:hover {
     text-decoration: underline;
   }
+
+body {
+  font-family: 'Verdana', sans-serif; /* Add fallback fonts */
+}

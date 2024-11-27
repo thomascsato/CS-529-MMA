@@ -55,6 +55,8 @@ export class ImageSelectorComponent {
   selectedFighter2: string | undefined; // Declare this property
   selectedWeightClass: string | undefined
   selectedGender: string | undefined
+  winprobr: string | undefined // winprobr: number | null = null; ?
+  winprobb: string | undefined // winprobb: number | null = null;
 
   fighter1Stats: FighterStats | null = null;
   fighter2Stats: FighterStats | null = null;
@@ -87,7 +89,7 @@ export class ImageSelectorComponent {
         fighter_1: this.selectedFighter1, // Make sure keys match what is expected in Lambda.
         fighter_2: this.selectedFighter2,
         weight_class: this.selectedWeightClass,
-        gender: this.selectedGender
+        gender: this.selectedGender,
       };
 
       this.apiService.fetchData(inputData).subscribe(
@@ -140,6 +142,15 @@ export class ImageSelectorComponent {
             };
           console.log('fighter2Stats:', this.fighter2Stats);
           }
+
+          if (parsedBody.winp_r) {
+            this.winprobr = parsedBody.winp_r
+          }
+
+          if (parsedBody.winp_b) {
+            this.winprobb = parsedBody.winp_b
+          }
+
         },
         (error) => {
           console.error('Error:', error);
