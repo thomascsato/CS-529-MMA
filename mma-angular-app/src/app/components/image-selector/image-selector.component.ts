@@ -55,8 +55,8 @@ export class ImageSelectorComponent {
   selectedFighter2: string | undefined; // Declare this property
   selectedWeightClass: string | undefined
   selectedGender: string | undefined
-  winprobr: string | undefined // winprobr: number | null = null; ?
-  winprobb: string | undefined // winprobb: number | null = null;
+  winprobr: number | null = null;
+  winprobb: number | null = null;
 
   fighter1Stats: FighterStats | null = null;
   fighter2Stats: FighterStats | null = null;

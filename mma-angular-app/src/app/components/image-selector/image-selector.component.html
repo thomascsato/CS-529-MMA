@@ -9,7 +9,7 @@
       <p class="fighter-caption">
         <span class="fighter-name">{{ selectedFighter1 }}</span><br>
         <span class="win-label">Win Probability:</span><br>
-        <span class="win-probability">{{ winprobr }}</span>
+        <span class="win-probability">{{ winprobr | percent }}</span>
       </p>
     </div>
 
@@ -58,7 +58,7 @@
       <p class="fighter-caption">
         <span class="fighter-name">{{ selectedFighter2 }}</span><br>
         <span class="win-label">Win Probability:</span><br>
-        <span class="win-probability">{{ winprobb }}</span>
+        <span class="win-probability">{{ winprobb | percent }}</span>
       </p>
     </div>
 
