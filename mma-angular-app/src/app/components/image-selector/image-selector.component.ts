@@ -25,6 +25,7 @@ interface FighterStats {
   tdAcc: number;
   tdDef: number;
   subAvg: number;
+  [key: string]: string | number;
 }
 
 @Component({
@@ -41,6 +42,8 @@ export class ImageSelectorComponent {
     "Women's Bantamweight", "Women's Featherweight"
   ]
   genders: string[] = ["Men", "Women"]
+
+  statsToShow = ['wins', 'losses', 'height', 'weight', 'reach', 'stance', 'age', 'slpm', 'strAcc', 'sapm', 'strDef', 'tdAvg', 'tdAcc', 'tdDef', 'subAvg'];
 
   ngOnInit() {
     console.log('Images loaded:', this.images);
@@ -161,6 +164,27 @@ export class ImageSelectorComponent {
       console.error('Both fighters must be selected.');
       this.apiResponse = 'Please select both fighters.';
     }
+  }
+
+  getStatLabel(stat: string): string {
+    const labels: {[key: string]: string} = {
+      'wins': 'Wins',
+      'losses': 'Losses',
+      'height': 'Height (cm)',
+      'weight': 'Weight (kg)',
+      'reach': 'Reach (cm)',
+      'stance': 'Stance',
+      'age': 'Age',
+      'slpm': 'Strikes Landed per Minute',
+      'strAcc': 'Striking Accuracy',
+      'sapm': 'Strikes Absorbed per Minute',
+      'strDef': 'Striking Defense',
+      'tdAvg': 'Takedowns Average',
+      'tdAcc': 'Takedown Accuracy',
+      'tdDef': 'Takedown Defense',
+      'subAvg': 'Submissions Average'
+    };
+    return labels[stat] || stat;
   }
 
   fetchApiData(inputData: string): void {

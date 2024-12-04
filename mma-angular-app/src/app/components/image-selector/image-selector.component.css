@@ -90,14 +90,27 @@ button {
 }
 
 .fighter-stats-container {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 10px;
   margin-top: 20px;
 }
 
-.fighter-stats {
-  margin-top: 20px;
+.stat-row {
+  display: contents;
+}
+
+.fighter1-stat {
+  text-align: right;
+}
+
+.stat-name {
+  text-align: center;
+  font-weight: bold;
+  padding: 0 10px;
+}
+
+.fighter2-stat {
   text-align: left;
 }
 

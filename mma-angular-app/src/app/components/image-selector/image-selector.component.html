@@ -4,12 +4,13 @@
 
     <div class="fighter-box">
       <div class="image-box">
-        <img [src]="fighter1Image" alt="Fighter 1 Image" />
+        <img [src]="fighter1Image" alt="Select Fighter 1" />
       </div>
       <p class="fighter-caption">
         <span class="fighter-name">{{ selectedFighter1 }}</span><br>
         <span class="win-label">Win Probability:</span><br>
-        <span class="win-probability">{{ winprobr | percent }}</span>
+        <!-- Switching win probabilities here: win prob r for red is what it should be -->
+        <span class="win-probability">{{ winprobb | percent }}</span>
       </p>
     </div>
 
@@ -48,67 +49,29 @@
       </div>
     
       <button (click)="compareFighters()">Compare Fighters</button>
+      
+    <div class="fighter-stats-container" *ngIf="fighter1Stats && fighter2Stats">
+      <div class="stat-row" *ngFor="let stat of statsToShow">
+        <span class="fighter1-stat">{{ fighter1Stats[stat] }}</span>
+        <span class="stat-name">{{ getStatLabel(stat) }}</span>
+        <span class="fighter2-stat">{{ fighter2Stats[stat] }}</span>
+      </div>
+    </div>
 
     </div>
 
     <div class="fighter-box">
       <div class="image-box">
-        <img [src]="fighter2Image" alt="Fighter 2 Image" />
+        <img [src]="fighter2Image" alt="Select Fighter 2" />
       </div>
       <p class="fighter-caption">
         <span class="fighter-name">{{ selectedFighter2 }}</span><br>
         <span class="win-label">Win Probability:</span><br>
-        <span class="win-probability">{{ winprobb | percent }}</span>
+        <!-- Switching win probabilities here: win prob b for blue is what it should be -->
+        <span class="win-probability">{{ winprobr | percent }}</span>
       </p>
     </div>
 
   </div>
-
-  <div class="fighter-stats-container" *ngIf="fighter1Stats || fighter2Stats">
-
-    <div class="fighter-stats" *ngIf="fighter1Stats">
-      <h2>{{ fighter1Stats.name }} Stats</h2>
-      <ul>
-        <li>Wins: {{ fighter1Stats.wins }}</li>
-        <li>Losses: {{ fighter1Stats.losses }}</li>
-        <li>Height: {{ fighter1Stats.height }} cm</li>
-        <li>Weight: {{ fighter1Stats.weight }} kg</li>
-        <li>Reach: {{ fighter1Stats.reach }} cm</li>
-        <li>Stance: {{ fighter1Stats.stance }}</li>
-        <li>Age: {{ fighter1Stats.age }}</li>
-        <li>Strikes Landed per Minute: {{ fighter1Stats.slpm }}</li>
-        <li>Striking Accuracy: {{ fighter1Stats.strAcc | percent }}</li>
-        <li>Strikes Absorbed per Minute: {{ fighter1Stats.sapm }}</li>
-        <li>Striking Defense: {{ fighter1Stats.strDef | percent }}</li>
-        <li>Takedowns Average: {{ fighter1Stats.tdAvg }}</li>
-        <li>Takedown Accuracy: {{ fighter1Stats.tdAcc | percent }}</li>
-        <li>Takedown Defense: {{ fighter1Stats.tdDef | percent }}</li>
-        <li>Submissions Average: {{ fighter1Stats.subAvg }}</li>
-      </ul>
-    </div>
-
-    <div class="fighter-stats" *ngIf="fighter2Stats">
-      <h2>{{ fighter2Stats.name }} Stats</h2>
-      <ul>
-        <li>Wins: {{ fighter2Stats.wins }}</li>
-        <li>Losses: {{ fighter2Stats.losses }}</li>
-        <li>Height: {{ fighter2Stats.height }} cm</li>
-        <li>Weight: {{ fighter2Stats.weight }} kg</li>
-        <li>Reach: {{ fighter2Stats.reach }} cm</li>
-        <li>Stance: {{ fighter2Stats.stance }}</li>
-        <li>Age: {{ fighter2Stats.age }}</li>
-        <li>Strikes Landed per Minute: {{ fighter2Stats.slpm }}</li>
-        <li>Striking Accuracy: {{ fighter2Stats.strAcc | percent }}</li>
-        <li>Strikes Absorbed per Minute: {{ fighter2Stats.sapm }}</li>
-        <li>Striking Defense: {{ fighter2Stats.strDef | percent }}</li>
-        <li>Takedowns Average: {{ fighter2Stats.tdAvg }}</li>
-        <li>Takedown Accuracy: {{ fighter2Stats.tdAcc | percent }}</li>
-        <li>Takedown Defense: {{ fighter2Stats.tdDef | percent }}</li>
-        <li>Submissions Average: {{ fighter2Stats.subAvg }}</li>
-      </ul>
-    </div>
-
-  </div>
-  
 
 </div>
